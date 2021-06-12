@@ -1,5 +1,6 @@
 import { formatPrice } from './utils.js';
 import { addToCart } from './cart/setupCart.js';
+import { openCart } from './cart/toggleCart.js';
 
 
 
@@ -8,7 +9,7 @@ const display = (products, element) => {
 element.innerHTML = products.map((product)=>{
 
     const {id,name,image,price} = product;
-    
+
     return `  <article class="product">
     <div class="product-container">
       <img src="${image}" class="product-img img" alt="${name}">
@@ -28,6 +29,14 @@ element.innerHTML = products.map((product)=>{
     </footer>
   </article>`
 }).join('');
+element.addEventListener('click', (e)=>{
+    const parent = e.target.parentElement;
+   if(parent.classList.contains('product-cart-btn')){
+       addToCart(parent.dataset.id)
+       
+   }
+    
+})
 };
 
 export default display;
