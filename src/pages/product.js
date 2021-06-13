@@ -14,12 +14,12 @@ const imgDOM = getElement('.single-product-img');
 const titleDOM = getElement('.single-product-title');
 const companyDOM = getElement('.single-product-company');
 const priceDOM = getElement('.single-product-price');
-const colorsDOM = getElement('.product-color');
+const colorsDOM = getElement('.single-product-colors');
 const descDOM = getElement('.single-product-desc');
 const cartBtn = getElement('.addToCartBtn');
 
 // cart product
-// let productID;
+let productID;
 
 // show product when page loads
 
@@ -27,10 +27,35 @@ window.addEventListener('DOMContentLoaded', async () => {
     const urlId = window.location.search;
     try {
         const response = await fetch(`${singleProductUrl}${urlId}`);
-        if(response.status >=200 && response.status <=299){
-            const product = response.json();
-        } 
-        else{
+        if (response.status >= 200 && response.status <= 299) {
+            const product = await response.json();
+            // grab data
+           
+            const { id, fields } = product;
+            
+            productID = id;
+            const { name, company, price, colors, description } = fields;
+
+            const image = fields.image[0].thumbnails.large.url;
+            // set values..
+            document.title = `${name.toUpperCase()} | Comfy`;
+            pageTitleDOM.textContent = `Home / ${name}`;
+            imgDOM.src = image;
+            titleDOM.textContent = name;
+            companyDOM.textContent = `by ${company}`;
+            priceDOM.textContent = formatPrice(price);
+            descDOM.textContent = description;
+            colors.forEach((color)=>{
+                const span = document.createElement('span');
+                span.classList.add('product-color');
+                span.style.backgroundColor = `${color}`;
+                colorsDOM.appendChild(span);
+
+            })
+            
+
+        }
+        else {
             console.log(response.status, response.statusText);
             centerDOM.innerHTML = `
             <div>
@@ -42,9 +67,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.log(error);
     }
-  
-    
-   
-   
+
+
+
+
     loading.style.display = 'none';
+})
+
+
+cartBtn.addEventListener('click', ()=>{
+    addToCart(productID);
 })
