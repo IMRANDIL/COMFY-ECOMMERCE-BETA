@@ -10,5 +10,8 @@ store = products.map((product)=>{
 setStorageItem('store',store)
 };
 
-const findProduct = () => {};
+const findProduct = (id) => {
+let productItem = store.find((product)=>product.id === id);
+return productItem;
+};
 export { store, setupStore, findProduct };
