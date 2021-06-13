@@ -708,6 +708,11 @@ Products Page
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+
+
+
+
 .filter-error {
   position: absolute;
   top: 5rem;
@@ -715,7 +720,21 @@ Products Page
   width: 100%;
   text-align: center;
   margin-top: 4rem;
+  color: firebrick;
 }
+
+
+@media screen and (max-width: 600px) {
+  .filter-error{
+    margin-top: -9rem;
+  }
+}
+
+
+
+
+
+
 /*
 =============== 
 Single Product Page
