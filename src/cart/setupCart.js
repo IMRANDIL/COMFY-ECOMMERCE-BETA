@@ -27,6 +27,11 @@ export const addToCart = (id) => {
     addToCartDOM(product);
   } else {
     // update values
+    const amount = increaseAmount(id);
+    const items = [...cartItemsDOM.querySelectorAll('.cart-item-amount')];
+    const newAmount = items.find((value) => value.dataset.id === id);
+    newAmount.textContent = amount;
+
   }
   // add one to the item count
   displayCartItemCount();
@@ -37,6 +42,43 @@ export const addToCart = (id) => {
   //more stuff coming up
   openCart();
 };
+
+
+function removeItem(id){
+  cart = cart.filter((cartItem)=>cartItem.id !== id);
+}
+
+
+
+
+function increaseAmount(id) {
+  let newAmount;
+  cart = cart.map((cartItem) => {
+    newAmount = cartItem.amount + 1;
+    if (cartItem.id === id) {
+      cartItem = { ...cartItem, amount: newAmount };
+    }
+    return cartItem;
+  })
+  return newAmount;
+}
+
+
+
+function decreaseAmount(id) {
+  let newAmount;
+  cart = cart.map((cartItem) => {
+    newAmount = cartItem.amount - 1;
+    if (cartItem.id === id) {
+      cartItem = { ...cartItem, amount: newAmount };
+    }
+    return cartItem;
+  })
+  return newAmount;
+}
+
+
+
 function displayCartItemCount() {
   const amount = cart.reduce((total, cartItem) => {
     return (total += cartItem.amount);
@@ -46,8 +88,8 @@ function displayCartItemCount() {
 function displayCartTotal() {
   let total = cart.reduce((total, cartItem) => {
     return (total += cartItem.price * cartItem.amount);
-   
-  },0);
+
+  }, 0);
   cartTotalDOM.textContent = `Total : ${formatPrice(total)} `;
 }
 function displayCartItemsDOM() {
@@ -55,7 +97,43 @@ function displayCartItemsDOM() {
     addToCartDOM(cartItem);
   });
 }
-function setupCartFunctionality() {}
+function setupCartFunctionality() {
+  cartItemsDOM.addEventListener('click', (e) => {
+    const element = e.target;
+    const parent = e.target.parentElement;
+    const id = e.target.dataset.id;
+    const parentId = e.target.parentElement.dataset.id;
+
+//remove
+if(element.classList.contains('cart-item-remove-btn')){
+  removeItem(id);
+  parent.parentElement.remove();
+}
+
+//increase
+if(parent.classList.contains('cart-item-increase-btn')){
+  const newAmount = increaseAmount(parentId);
+  parent.nextElementSibling.textContent = newAmount;
+}
+
+//decrease
+if(parent.classList.contains('cart-item-decrease-btn')){
+  const newAmount = decreaseAmount(parentId);
+  if(newAmount === 0){
+    removeItem(parentId);
+    parent.parentElement.parentElement.remove();
+  }
+  else{
+    parent.previousElementSibling.textContent = newAmount;
+  }
+}
+
+
+    displayCartItemCount();
+    displayCartTotal();
+    setStorageItem('cart', cart);
+  })
+}
 const init = () => {
   // display amount of cart items
   displayCartItemCount();
